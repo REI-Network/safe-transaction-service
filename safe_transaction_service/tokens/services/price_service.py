@@ -43,6 +43,7 @@ from ..clients import (
     CoingeckoClient,
     KrakenClient,
     KucoinClient,
+    GateClient,
 )
 from ..tasks import EthValueWithTimestamp, calculate_token_eth_price_task
 
@@ -83,6 +84,7 @@ class PriceService:
         self.curve_oracle = CurveOracle(self.ethereum_client)
         self.kraken_client = KrakenClient()
         self.kucoin_client = KucoinClient()
+        self.gate_client = GateClient()
         self.kyber_oracle = KyberOracle(self.ethereum_client)
         self.sushiswap_oracle = SushiswapOracle(self.ethereum_client)
         self.uniswap_oracle = UniswapOracle(self.ethereum_client)
@@ -218,6 +220,8 @@ class PriceService:
             EthereumNetwork.ARBITRUM_TESTNET,
         ):
             return self.get_aurora_usd_price()
+        elif self.ethereum_network in (EthereumNetwork.REI_MAINNET, EthereumNetwork.REI_TESTNET):
+            return self.gate_client.get_rei_usd_price()
         else:
             try:
                 return self.kraken_client.get_eth_usd_price()
